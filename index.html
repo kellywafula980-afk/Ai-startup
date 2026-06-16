@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HyperContext AI — Stop AI Hallucinations With Real-Time Context Fabric</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0B0F19;
+            --text-color: #F3F4F6;
+            --text-muted: #9CA3AF;
+            --primary: #6366F1;
+            --primary-hover: #4F46E5;
+            --accent: #10B981;
+            --card-bg: #111827;
+            --border-color: #1F2937;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Navbar */
+        header {
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            background: rgba(11, 15, 25, 0.8);
+            backdrop-filter: blur(12px);
+            z-index: 100;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 4.5rem;
+        }
+
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.05em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo span {
+            color: var(--primary);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        nav a {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            transition: color 0.2s;
+        }
+
+        nav a:hover {
+            color: var(--text-color);
+        }
+
+        .cta-group {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            font-size: 0.95rem;
+            font-weight: 500;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-color);
+        }
+
+        .btn-secondary:hover {
+            color: var(--primary);
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-large {
+            padding: 0.8rem 2rem;
+            font-size: 1.1rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 6rem 0 4rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -10%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, rgba(11,15,25,0) 70%);
+            z-index: -1;
+        }
+
+        .badge {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            color: var(--primary);
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            letter-spacing: -0.04em;
+            line-height: 1.15;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(180deg, #FFFFFF 0%, #9CA3AF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 760px;
+            margin: 0 auto 2.5rem;
+        }
+
+        .hero-meta {
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* Social Proof / Logos */
+        .logos {
+            padding: 3rem 0;
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .logos p {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .logo-grid {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 4rem;
+            opacity: 0.6;
+            flex-wrap: wrap;
+        }
+
+        .logo-item {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-color);
+            letter-spacing: -0.02em;
+        }
+
+        /* Features Section */
+        .section {
+            padding: 6rem 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            margin-bottom: 1rem;
+        }
+
+        .section-header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 2.5rem;
+            border-radius: 12px;
+            transition: border 0.3s;
+        }
+
+        .card:hover {
+            border-color: var(--primary);
+        }
+
+        .card-icon {
+            width: 3rem;
+            height: 3rem;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Interactive Process/Steps Block */
+        .steps {
+            background-color: #0e1422;
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+        }
+
+        .step-item {
+            position: relative;
+        }
+
+        .step-number {
+            font-size: 3rem;
+            font-weight: 800;
+            color: rgba(99, 102, 241, 0.15);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-item h4 {
+            font-size: 1.15rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-item p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Testimonial */
+        .testimonial {
+            background: linear-gradient(180deg, var(--bg-color) 0%, #0e1422 100%);
+            text-align: center;
+        }
+
+        .quote-box {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .quote-text {
+            font-size: 1.5rem;
+            font-weight: 500;
+            letter-spacing: -0.02em;
+            margin-bottom: 2rem;
+            color: #E5E7EB;
+        }
+
+        .quote-author {
+            font-size: 0.95rem;
+        }
+
+        .quote-author strong {
+            color: var(--text-color);
+            display: block;
+        }
+
+        .quote-author span {
+            color: var(--text-muted);
+        }
+
+        /* Pricing Section */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            align-items: center;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .price-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 3rem 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .price-card.featured {
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.1);
+        }
+
+        .price-card.featured .ribbon {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--primary);
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+        }
+
+        .price-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .price-num {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--text-color);
+            line-height: 1;
+            margin-bottom: 1.5rem;
+        }
+
+        .price-num span {
+            font-size: 1rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .price-features {
+            list-style: none;
+            text-align: left;
+            margin: 2rem 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            font-size: 0.95rem;
+            color: #D1D5DB;
+        }
+
+        .price-features li::before {
+            content: '✓';
+            color: var(--accent);
+            margin-right: 0.5rem;
+            font-weight: bold;
+        }
+
+        .price-card .btn {
+            width: 100%;
+        }
+
+        /* CTA Footer Section */
+        .footer-cta {
+            padding: 8rem 0;
+            text-align: center;
+            background: radial-gradient(circle at bottom, rgba(99,102,241,0.1) 0%, rgba(11,15,25,0) 60%);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-cta h2 {
+            font-size: 2.75rem;
+            letter-spacing: -0.03em;
+            margin-bottom: 1rem;
+        }
+
+        .footer-cta p {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding: 3rem 0;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .footer-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        /* Responsive Layouts */
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            .nav-container nav, .cta-group .btn-secondary { display: none; }
+            .logo-grid { gap: 2rem; }
+            .footer-container { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header>
+        <div class="container nav-container">
+            <a href="#" class="logo">HyperContext<span>AI</span></a>
+            <nav>
+                <ul>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#process">How it Works</a></li>
+                    <li><a href="#pricing">Pricing</a></li>
+                    <li><a href="mailto:security@hypercontext.ai">Security</a></li>
+                </ul>
+            </nav>
+            <div class="cta-group">
+                <a href="#pricing" class="btn btn-secondary">Book a Demo</a>
+                <a href="#pricing" class="btn btn-primary">Start Free Trial</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <span class="badge">Smarter AI Infrastructure for 2026</span>
+            <h1>Your AI is only as smart as its context.<br>Stop the hallucinations.</h1>
+            <p>Connect your entire company’s knowledge base to your AI layer in 2 clicks. No manual prompt engineering required, zero data leaks, 100% verifiable output accuracy.</p>
+            <div>
+                <a href="#pricing" class="btn btn-primary btn-large">Get Started for Free</a>
+            </div>
+            <p class="hero-meta">No credit card required. 14-day fully featured trial.</p>
+        </div>
+    </section>
+
+    <!-- Social Proof Section -->
+    <section class="logos">
+        <div class="container">
+            <p>Trusted by engineering & operations hubs at forward-thinking enterprises</p>
+            <div class="logo-grid">
+                <div class="logo-item">▲ Vercel-X</div>
+                <div class="logo-item">⬢ ForgeLabs</div>
+                <div class="logo-item">● Omniscience</div>
+                <div class="logo-item">■ LinearScale</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Built for the Decentralized Tech Stack</h2>
+                <p>AI models are incredibly powerful, but they are siloed. HyperContext acts as the live neural tissue connecting them to your operations.</p>
+            </div>
+            <div class="grid-3">
+                <div class="card">
+                    <div class="card-icon">🖧</div>
+                    <h3>Universal Graph Connectors</h3>
+                    <p>Automatically maps Slack spaces, Jira tickets, Notion tables, and private GitHub codebases in real-time into a unified vector layer.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🛡️</div>
+                    <h3>Enterprise Privacy Masking</h3>
+                    <p>Enforce strict corporate firewalls. Safely run workflows through public LLMs with fully localized, automated PII and compliance scrubbing.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🔄</div>
+                    <h3>Self-Correcting Sync</h3>
+                    <p>Detects conflicting documentation out-of-the-box. HyperContext automatically flags or archives stale files so models never reference outdated rules.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Process Steps -->
+    <section id="process" class="section steps">
+        <div class="container">
+            <div class="section-header">
+                <h2>Deploy Context in 3 Minutes flat</h2>
+                <p>No intensive code architecture overhauls needed. We wrap into your existing pipeline effortlessly.</p>
+            </div>
+            <div class="steps-grid">
+                <div class="step-item">
+                    <div class="step-number">01</div>
+                    <h4>Plug In Assets</h4>
+                    <p>Authenticate your core infrastructure via highly protected, granular OAuth access settings.</p>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">02</div>
+                    <h4>Contextualize</h4>
+                    <p>Our context fabric engine correlates background relational graphs between code bases, conversations, and live wikis.</p>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">03</div>
+                    <h4>Go To Production</h4>
+                    <p>Your workspace immediately interacts with hyper-accurate organizational memory natively inside their custom apps or prompt bars.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonial -->
+    <section class="section testimonial">
+        <div class="container">
+            <div class="quote-box">
+                <p class="quote-text">"Before HyperContext, our internal engineering agents kept deploying code referencing deprecated API endpoints from 2024. Within a week of deployment, our engineering velocity doubled, and AI accuracy reached 98%."</p>
+                <div class="quote-author">
+                    <strong>Sarah Jenkins</strong>
+                    <span>VP of Operations, CloudScale Inc.</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Predictable pricing built to scale</h2>
+                <p>Get started instantly. Upgrade or down-scale your environment footprint as your automated team shifts shapes.</p>
+            </div>
+            <div class="pricing-grid">
+                <div class="price-card">
+                    <div class="price-title">Starter</div>
+                    <div class="price-num">$49<span>/mo</span></div>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Ideal for small, growing engineering pods.</p>
+                    <ul class="price-features">
+                        <li>Up to 15 team workspaces</li>
+                        <li>5 core web app integrations</li>
+                        <li>Hourly graph context syncing</li>
+                        <li>Standard TLS encryption</li>
+                    </ul>
+                    <button class="btn btn-secondary" onclick="alert('Starter trial started!')">Start 14-Day Free Trial</button>
+                </div>
+                <div class="price-card featured">
+                    <div class="ribbon">Most Popular</div>
+                    <div class="price-title">Growth</div>
+                    <div class="price-num">$199<span>/mo</span></div>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Perfect for data-driven, agile tech firms.</p>
+                    <ul class="price-features">
+                        <li>Unlimited active team seats</li>
+                        <li>All out-of-box platform connectors</li>
+                        <li>Real-time, instantaneous event mapping</li>
+                        <li>Advanced AI masking layers</li>
+                    </ul>
+                    <button class="btn btn-primary" onclick="alert('Growth trial started!')">Start 14-Day Free Trial</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA Section -->
+    <section class="footer-cta">
+        <div class="container">
+            <h2>Ready to give your AI a brain upgrade?</h2>
+            <p>Join over 1,200 organizations transforming raw models into dedicated corporate domain experts.</p>
+            <a href="#pricing" class="btn btn-primary btn-large">Deploy HyperContext Now</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-container">
+            <div>
+                &copy; 2026 HyperContext AI Inc. All rights reserved.
+            </div>
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">SOC2 Compliance Vault</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
