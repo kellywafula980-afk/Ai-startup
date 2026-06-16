@@ -106,15 +106,18 @@
             transition: all 0.2s;
             cursor: pointer;
             border: none;
+            text-align: center;
         }
 
         .btn-secondary {
             background: transparent;
             color: var(--text-color);
+            border: 1px solid var(--border-color);
         }
 
         .btn-secondary:hover {
             color: var(--primary);
+            border-color: var(--primary);
         }
 
         .btn-primary {
@@ -387,6 +390,7 @@
             font-weight: 600;
             padding: 0.25rem 0.75rem;
             border-radius: 50px;
+            color: white;
         }
 
         .price-title {
@@ -497,8 +501,8 @@
                 </ul>
             </nav>
             <div class="cta-group">
-                <a href="#pricing" class="btn btn-secondary">Book a Demo</a>
-                <a href="#pricing" class="btn btn-primary">Start Free Trial</a>
+                <button onclick="openWaitlist('Demo Request')" class="btn btn-secondary">Book a Demo</button>
+                <button onclick="openWaitlist('General Onboarding')" class="btn btn-primary">Start Free Trial</button>
             </div>
         </div>
     </header>
@@ -510,7 +514,7 @@
             <h1>Your AI is only as smart as its context.<br>Stop the hallucinations.</h1>
             <p>Connect your entire company’s knowledge base to your AI layer in 2 clicks. No manual prompt engineering required, zero data leaks, 100% verifiable output accuracy.</p>
             <div>
-                <a href="#pricing" class="btn btn-primary btn-large">Get Started for Free</a>
+                <button onclick="openWaitlist('Main Hero')" class="btn btn-primary btn-large">Get Started for Free</button>
             </div>
             <p class="hero-meta">No credit card required. 14-day fully featured trial.</p>
         </div>
@@ -614,7 +618,7 @@
                         <li>Hourly graph context syncing</li>
                         <li>Standard TLS encryption</li>
                     </ul>
-                    <button class="btn btn-secondary" onclick="alert('Starter trial started!')">Start 14-Day Free Trial</button>
+                    <button class="btn btn-secondary" onclick="openWaitlist('Starter Plan')">Start 14-Day Free Trial</button>
                 </div>
                 <div class="price-card featured">
                     <div class="ribbon">Most Popular</div>
@@ -627,7 +631,7 @@
                         <li>Real-time, instantaneous event mapping</li>
                         <li>Advanced AI masking layers</li>
                     </ul>
-                    <button class="btn btn-primary" onclick="alert('Growth trial started!')">Start 14-Day Free Trial</button>
+                    <button class="btn btn-primary" onclick="openWaitlist('Growth Plan')">Start 14-Day Free Trial</button>
                 </div>
             </div>
         </div>
@@ -638,7 +642,7 @@
         <div class="container">
             <h2>Ready to give your AI a brain upgrade?</h2>
             <p>Join over 1,200 organizations transforming raw models into dedicated corporate domain experts.</p>
-            <a href="#pricing" class="btn btn-primary btn-large">Deploy HyperContext Now</a>
+            <button onclick="openWaitlist('Bottom CTA')" class="btn btn-primary btn-large">Deploy HyperContext Now</button>
         </div>
     </section>
 
@@ -655,6 +659,41 @@
             </div>
         </div>
     </footer>
+
+    <!-- High-Converting Waitlist Modal Window -->
+    <div id="waitlistModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(11, 15, 25, 0.85); backdrop-filter:blur(8px); z-index:1000; align-items:center; justify-content:center;">
+        <div style="background:#111827; border:1px solid #1F2937; padding:3rem 2rem; border-radius:12px; max-width:450px; width:90%; text-align:center; box-shadow:0 20px 40px rgba(0,0,0,0.5); position:relative;">
+            <span onclick="closeWaitlist()" style="position:absolute; top:1rem; right:1.5rem; cursor:pointer; color:#9CA3AF; font-size:1.5rem;">&times;</span>
+            <h3 style="font-size:1.5rem; margin-bottom:1rem; letter-spacing:-0.02em;">Join the <span id="modalTier" style="color:#6366F1;"></span> Pilot Batch</h3>
+            <p style="color:#9CA3AF; font-size:0.95rem; margin-bottom:2rem;">To guarantee flawless vector token speeds and strict sandboxed security, we only onboard 5 tech teams per week. Drop your work email below to secure your placement.</p>
+            
+            <form onsubmit="submitWaitlist(event)">
+                <input type="email" id="waitlistEmail" required placeholder="name@company.com" style="width:100%; padding:0.8rem 1rem; background:#0B0F19; border:1px solid #1F2937; border-radius:6px; color:#FFF; font-family:inherit; margin-bottom:1rem; outline:none; font-size:0.95rem;">
+                <button type="submit" class="btn btn-primary" style="width:100%; padding:0.8rem;">Secure My Priority Slot</button>
+            </form>
+            <p id="successMsg" style="color:#10B981; font-size:0.9rem; margin-top:1rem; display:none;">✓ Slot reserved. Synchronizing workspace clusters...</p>
+        </div>
+    </div>
+
+    <script>
+        function openWaitlist(tier) {
+            document.getElementById('modalTier').innerText = tier;
+            document.getElementById('waitlistModal').style.display = 'flex';
+            document.getElementById('successMsg').style.display = 'none';
+        }
+        function closeWaitlist() {
+            document.getElementById('waitlistModal').style.display = 'none';
+        }
+        function submitWaitlist(e) {
+            e.preventDefault();
+            var email = document.getElementById('waitlistEmail').value;
+            document.getElementById('successMsg').style.display = 'block';
+            setTimeout(function() {
+                alert("Success! We have logged your request for " + email + ". Our operations engineer will reach out within 4 hours to verify your company's tech stack.");
+                closeWaitlist();
+            }, 1200);
+        }
+    </script>
 
 </body>
 </html>
